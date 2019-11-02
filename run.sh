@@ -33,10 +33,27 @@ case "$first_line" in
     new_version="$(tar Oxvf $file Versions.txt | sed -n 's/^Rev\. P4D\/[^\/]*\/20\([^\/]*\)\/\([^ ]*\).*/\1-\2/p')"
     new_sha256="$(openssl dgst -sha256 $file)"
     new_sha256="${new_sha256##* }"
-    echo "TODO: automatically open a PR with $new_version and $new_sha256, and then update last.modified=$new_last_modified" >&2
-    exit 1
 
-    # TODO: open a PR like https://github.com/Homebrew/homebrew-cask/pull/70981
+    file=Casks/perforce.rb
+    if test ! -d homebrew-cask/.git
+    then
+        git init homebrew-cask
+        echo "/$file" >homebrew-cask/.git/info/sparse-checkout
+        git -C homebrew-cask config core.sparseCheckout true
+    fi
+    git -C homebrew-cask fetch --depth=1000 https://github.com/Homebrew/homebrew-cask/ master
+    git -C homebrew-cask reset --hard FETCH_HEAD
+
+    old_version=$(sed -n "s/^ *version '\\(.*\\)'$/\1/p" <homebrew-cask/$file)
+    commit_message="Update perforce from $old_version to $new_version"
+    sed -e "s/^\( *version '\)[^']*/\1$new_version/" \
+        -e "s/^\( *sha256 '\)[^']*/\1$new_sha256/" \
+        <homebrew-cask/$file >homebrew-cask/$file.new
+    mv homebrew-cask/$file.new homebrew-cask/$file
+    git -C homebrew-cask commit -m "$commit_message" $file
+
+    echo "TODO: open a PR like https://github.com/Homebrew/homebrew-cask/pull/70981" >&2
+    exit 1
 
     # Update the last.modified variable in this build definition
     if test -n "$SYSTEM_ACCESSTOKEN"
