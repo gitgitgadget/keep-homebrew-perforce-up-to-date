@@ -30,7 +30,7 @@ case "$first_line" in
 	curl --silent -o helix-core-server.tgz $url
     fi
 
-    new_version="$(tar Oxvf $file Versions.txt | sed -n 's/^Rev\. P4D\/[^\/]*\/20\([^\/]*\)\/\([^ ]*\).*/\1-\2/p')"
+    new_version="$(tar Oxvf $file Versions.txt | sed -n 's/^Rev\. P4D\/[^\/]*\/20\([^\/]*\)\/\([^ ]*\).*/\1,\2/p')"
     new_sha256="$(openssl dgst -sha256 $file)"
     new_sha256="${new_sha256##* }"
 
@@ -48,7 +48,6 @@ case "$first_line" in
     commit_message="Update perforce from $old_version to $new_version"
     sed -e "s/^\( *version '\)[^']*/\1$new_version/" \
         -e "s/^\( *sha256 '\)[^']*/\1$new_sha256/" \
-        -e 's/r#{version}/r#{version.gsub(\/-[0-9]*$\/, "")}/' \
         <homebrew-cask/$file >homebrew-cask/$file.new
     mv homebrew-cask/$file.new homebrew-cask/$file
     git -C homebrew-cask commit -m "$commit_message" $file
