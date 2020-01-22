@@ -41,7 +41,7 @@ case "$first_line" in
         echo "/$file" >homebrew-cask/.git/info/sparse-checkout
         git -C homebrew-cask config core.sparseCheckout true
     fi
-    git -C homebrew-cask fetch --depth=1000 https://github.com/Homebrew/homebrew-cask/ master
+    git -C homebrew-cask fetch https://github.com/Homebrew/homebrew-cask/ master
     git -C homebrew-cask reset --hard FETCH_HEAD
 
     old_version=$(sed -n "s/^ *version '\\(.*\\)'$/\1/p" <homebrew-cask/$file)
