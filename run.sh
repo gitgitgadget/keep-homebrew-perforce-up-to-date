@@ -79,13 +79,12 @@ case "$first_line" in
     fi
 
     # Update the last.modified variable in this build definition
-    if test -n "$SYSTEM_ACCESSTOKEN"
+    if test -n "$AZURE_PIPELINE_PAT"
     then
-        auth_header="Authorization: Bearer $SYSTEM_ACCESSTOKEN"
         url="$SYSTEM_TEAMFOUNDATIONSERVERURI$SYSTEM_TEAMPROJECTID/_apis/build/definitions/$SYSTEM_DEFINITIONID?api-version=5.0"
-        original_json="$(curl --silent -H "$auth_header" -H "Accept: application/json; api-version=5.0; excludeUrls=true" "$url")"
+        original_json="$(curl --silent -u "PAT:$AZURE_PIPELINE_PAT" -H "Accept: application/json; api-version=5.0; excludeUrls=true" "$url")"
         json="$(echo "$original_json" | sed 's/\("last.modified":{"value":"\)[^"]*/\1'"$new_last_modified"/)"
-        curl --silent -X PUT -H "$auth_header" -H "Content-Type: application/json" -d "$json" "$url"
+        curl --silent -X PUT -u "PAT:$AZURE_PIPELINE_PAT" -H "Content-Type: application/json" -d "$json" "$url"
     fi
     ;;
 *)
