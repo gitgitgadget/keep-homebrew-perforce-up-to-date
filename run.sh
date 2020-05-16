@@ -2,7 +2,9 @@
 
 set -ex
 
-url=https://cdist2.perforce.com/perforce/r19.2/bin.macosx1010x86_64/helix-core-server.tgz
+rver="$(curl --silent https://www.perforce.com/perforce/doc.current/user/p4vnotes.txt |
+	sed -n 'N;N;s/.* Version 20\([0-9][0-9]\.[1-9][0-9]*\).*/\1/p;q')"
+url=https://cdist2.perforce.com/perforce/r$rver/bin.macosx1010x86_64/helix-core-server.tgz
 
 test -n "$LAST_MODIFIED" ||
 LAST_MODIFIED="Fri, 11 Oct 2019 20:53:44 GMT"
