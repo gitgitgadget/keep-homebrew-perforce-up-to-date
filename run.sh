@@ -11,6 +11,16 @@ LAST_MODIFIED="Fri, 11 Oct 2019 20:53:44 GMT"
 
 curl -I --silent --header "If-Modified-Since: $LAST_MODIFIED" $url | tr -d '\r' >out
 first_line=$(head -n 1 <out)
+
+if test "HTTP/1.1 404 Not Found" = "$first_line" && test 20.2 = "$rver"
+then
+	# Seems that Perforce only offers 20.1 for public download
+	rver=20.1
+	url=https://cdist2.perforce.com/perforce/r$rver/bin.macosx1010x86_64/helix-core-server.tgz
+	curl -I --silent --header "If-Modified-Since: $LAST_MODIFIED" $url | tr -d '\r' >out
+	first_line=$(head -n 1 <out)
+fi
+
 case "$first_line" in
 "HTTP/1.1 304 Not Modified")
     ;; # still up to date; nothing needs to be changed
