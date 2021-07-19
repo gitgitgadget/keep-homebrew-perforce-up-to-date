@@ -56,10 +56,10 @@ case "$first_line" in
     git -C homebrew-cask fetch https://github.com/Homebrew/homebrew-cask/ master
     git -C homebrew-cask reset --hard FETCH_HEAD
 
-    old_version=$(sed -n "s/^ *version '\\(.*\\)'$/\1/p" <homebrew-cask/$file)
+    old_version=$(sed -n 's/^ *version "\(.*\)"$/\1/p' <homebrew-cask/$file)
     commit_message="Update perforce from $old_version to $new_version"
-    sed -e "s/^\( *version '\)[^']*/\1$new_version/" \
-        -e "s/^\( *sha256 '\)[^']*/\1$new_sha256/" \
+    sed -e 's/^\( *version "\)[^"]*/\1'"$new_version/" \
+        -e 's/^\( *sha256 "\)[^"]*/\1'"$new_sha256/" \
         <homebrew-cask/$file >homebrew-cask/$file.new
     mv homebrew-cask/$file.new homebrew-cask/$file
     git -C homebrew-cask commit -m "$commit_message" $file
