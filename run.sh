@@ -7,7 +7,7 @@ rver="$(curl --silent https://www.perforce.com/perforce/doc.current/user/p4vnote
 url=https://cdist2.perforce.com/perforce/r${rver#20}/bin.macosx1015x86_64/helix-core-server.tgz
 
 test -n "$LAST_MODIFIED" ||
-LAST_MODIFIED="Fri, 11 Oct 2019 20:53:44 GMT"
+LAST_MODIFIED="Wed, 14 Jul 2021 13:53:46 GMT"
 
 curl -I --silent --header "If-Modified-Since: $LAST_MODIFIED" $url | tr -d '\r' >out
 first_line=$(head -n 1 <out)
