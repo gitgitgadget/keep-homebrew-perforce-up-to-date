@@ -4,7 +4,7 @@ set -ex
 
 rver="$(curl --silent https://www.perforce.com/perforce/doc.current/user/p4vnotes.txt |
 	sed -n 'N;N;s/.* Version 20\([0-9][0-9]\.[1-9][0-9]*\).*/\1/p;q')"
-url=https://cdist2.perforce.com/perforce/r$rver/bin.macosx1010x86_64/helix-core-server.tgz
+url=https://cdist2.perforce.com/perforce/r$rver/bin.macosx1015x86_64/helix-core-server.tgz
 
 test -n "$LAST_MODIFIED" ||
 LAST_MODIFIED="Fri, 11 Oct 2019 20:53:44 GMT"
@@ -16,7 +16,7 @@ if test "HTTP/1.1 404 Not Found" = "$first_line" && test 20.2 = "$rver"
 then
 	# Seems that Perforce only offers 20.1 for public download
 	rver=20.1
-	url=https://cdist2.perforce.com/perforce/r$rver/bin.macosx1010x86_64/helix-core-server.tgz
+	url=https://cdist2.perforce.com/perforce/r$rver/bin.macosx1015x86_64/helix-core-server.tgz
 	curl -I --silent --header "If-Modified-Since: $LAST_MODIFIED" $url | tr -d '\r' >out
 	first_line=$(head -n 1 <out)
 fi
