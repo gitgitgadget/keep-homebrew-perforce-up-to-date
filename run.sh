@@ -12,14 +12,15 @@ LAST_MODIFIED="Wed, 14 Jul 2021 13:53:46 GMT"
 curl -I --silent --header "If-Modified-Since: $LAST_MODIFIED" $url | tr -d '\r' >out
 first_line=$(head -n 1 <out)
 
-if test "HTTP/1.1 404 Not Found" = "$first_line" && test 2021.2 = "$rver"
-then
-	# Seems that Perforce only offers 20.1 for public download
-	rver=2021.1
+case "$first_line,$rver" in
+"HTTP/1.1 404 Not Found",2021.[23])
+	# Seems that Perforce does not offer 21.3 for public download
+	rver=2021.$((${rver##*.}-1))
 	url=https://cdist2.perforce.com/perforce/r${rver#20}/bin.macosx1015x86_64/helix-core-server.tgz
 	curl -I --silent --header "If-Modified-Since: $LAST_MODIFIED" $url | tr -d '\r' >out
 	first_line=$(head -n 1 <out)
-fi
+	;;
+esac
 
 case "$first_line" in
 "HTTP/1.1 304 Not Modified")
